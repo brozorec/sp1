@@ -16,7 +16,7 @@ pub trait FieldParameters:
     const NB_LIMBS: usize = NUM_LIMBS;
     const NB_WITNESS_LIMBS: usize = 2 * Self::NB_LIMBS - 2;
     const WITNESS_OFFSET: usize = 1usize << 13;
-    const MODULUS: [u8; NUM_LIMBS];
+    const MODULUS: &'static [u8];
 
     fn modulus() -> BigUint {
         biguint_from_limbs(&Self::MODULUS)
@@ -28,8 +28,8 @@ pub trait FieldParameters:
 
     fn modulus_field_iter<F: Field>() -> impl Iterator<Item = F> {
         Self::MODULUS
-            .into_iter()
-            .map(|x| F::from_canonical_u8(x))
+            .iter()
+            .map(|x| F::from_canonical_u8(*x))
             .take(Self::NB_LIMBS)
     }
 

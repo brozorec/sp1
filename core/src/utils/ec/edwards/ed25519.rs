@@ -19,7 +19,7 @@ pub struct Ed25519BaseField;
 impl FieldParameters for Ed25519BaseField {
     const NB_BITS_PER_LIMB: usize = NB_BITS_PER_LIMB;
     const NB_WITNESS_LIMBS: usize = 2 * Self::NB_LIMBS - 2;
-    const MODULUS: [u8; Self::NB_LIMBS] = [
+    const MODULUS: &'static [u8] = &[
         237, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
         255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 127,
     ];
