@@ -17,7 +17,7 @@ pub type Bls12381 = SwCurve<Bls12381Parameters>;
 pub struct Bls12381BaseField;
 
 impl FieldParameters for Bls12381BaseField {
-    const NB_BITS_PER_LIMB: usize = 16;
+    const NB_BITS_PER_LIMB: usize = 8;
 
     const NB_LIMBS: usize = 48;
 
@@ -29,7 +29,7 @@ impl FieldParameters for Bls12381BaseField {
         27, 75, 154, 230, 127, 57, 234, 17, 1, 26,
     ];
 
-    const WITNESS_OFFSET: usize = 1usize << 20;
+    const WITNESS_OFFSET: usize = 1usize << 14;
 
     fn modulus() -> BigUint {
         BigUint::from_str_radix(
