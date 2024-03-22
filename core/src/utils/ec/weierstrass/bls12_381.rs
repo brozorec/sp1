@@ -1,4 +1,7 @@
-use milagro_bls::PublicKey;
+
+use amcl::bls381::big::Big;
+use amcl::bls381::bls381::utils::deserialize_g1;
+use amcl::bls381::fp::FP;
 use num::{BigUint, Num, Zero};
 use serde::{Deserialize, Serialize};
 
@@ -87,23 +90,33 @@ impl WeierstrassParameters for Bls12381Parameters {
 }
 
 pub fn decompress(g1_bytes: &[u8; 48]) -> AffinePoint<Bls12381> {
-    let pk = PublicKey::from_bytes_unchecked(g1_bytes).unwrap();
+    let point = deserialize_g1(g1_bytes).unwrap();
 
-    let x_str = pk.point.getx().to_string();
+    let x_str = point.getx().to_string();
     let x = BigUint::from_str_radix(x_str.as_str(), 16).unwrap();
-    let y_str = pk.point.gety().to_string();
+    let y_str = point.gety().to_string();
     let y = BigUint::from_str_radix(y_str.as_str(), 16).unwrap();
 
     AffinePoint::new(x, y)
 }
 
+pub fn bls381_sqrt(a: &BigUint) -> BigUint {
+    let a_big = Big::from_bytes(a.to_bytes_be().as_slice());
+
+    let a_sqrt = FP::new_big(a_big).sqrt();
+
+    BigUint::from_str_radix(a_sqrt.to_string().as_str(), 16).unwrap()
+}
+
 #[cfg(test)]
 mod tests {
 
-    use milagro_bls::G1_BYTES;
+    use amcl::bls381::bls381::proof_of_possession::G1_BYTES;
 
     use super::*;
     use crate::utils::ec::utils::biguint_from_limbs;
+    use num::bigint::RandBigInt;
+    use rand::thread_rng;
 
     const NUM_TEST_CASES: usize = 10;
 
@@ -151,6 +164,25 @@ mod tests {
 
             // Double the point to create a "random" point for the next iteration.
             point = point.clone().sw_double();
+        }
+    }
+
+    #[test]
+    fn test_bls12381_sqrt() {
+        let mut rng = thread_rng();
+        for _ in 0..10 {
+            // Check that sqrt(x^2)^2 == x^2
+            // We use x^2 since not all field elements have a square root
+            let x = rng.gen_biguint(381) % Bls12381BaseField::modulus();
+            let x_2 = (&x * &x) % Bls12381BaseField::modulus();
+            let sqrt = bls381_sqrt(&x_2);
+            if sqrt > x_2 {
+                println!("wtf");
+            }
+
+            let sqrt_2 = (&sqrt * &sqrt) % Bls12381BaseField::modulus();
+
+            assert_eq!(sqrt_2, x_2);
         }
     }
 }
