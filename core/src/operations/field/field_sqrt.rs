@@ -1,4 +1,4 @@
-use super::field_op::FieldOpCols32;
+use super::field_op::{FieldOpCols32, FieldOpCols48};
 use super::params::Limbs;
 use crate::air::SP1AirBuilder;
 use crate::utils::ec::field::FieldParameters;
@@ -20,9 +20,20 @@ pub struct FieldSqrtCols32<T> {
     pub multiplication: FieldOpCols32<T>,
 }
 
+#[derive(Debug, Clone, AlignedBorrow)]
+#[repr(C)]
+pub struct FieldSqrtCols48<T> {
+    /// The multiplication operation to verify that the sqrt and the input match.
+    ///
+    /// In order to save space, we actually store the sqrt of the input in `multiplication.result`
+    /// since we'll receive the input again in the `eval` function.
+    pub multiplication: FieldOpCols48<T>,
+}
+
 #[duplicate_item(
     sqrt_type           nb_limbs;
     [ FieldSqrtCols32 ] [ 32 ];
+    [ FieldSqrtCols48 ] [ 48 ];
 )]
 impl<F: PrimeField32> sqrt_type<F> {
     /// Populates the trace.
@@ -54,6 +65,7 @@ impl<F: PrimeField32> sqrt_type<F> {
 #[duplicate_item(
     sqrt_type            nb_limbs;
     [ FieldSqrtCols32 ]  [ 32 ];
+    [ FieldSqrtCols48 ]  [ 48 ];
 )]
 impl<V: Copy> sqrt_type<V> {
     /// Calculates the square root of `a`.

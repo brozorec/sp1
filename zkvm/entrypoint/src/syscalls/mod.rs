@@ -9,6 +9,7 @@ mod sha_compress;
 mod sha_extend;
 mod sys;
 mod unconstrained;
+mod bls12381;
 
 pub use ed25519::*;
 pub use halt::*;
@@ -20,6 +21,7 @@ pub use sha_compress::*;
 pub use sha_extend::*;
 pub use sys::*;
 pub use unconstrained::*;
+pub use bls12381::*;
 
 /// Halts the program.
 pub const HALT: u32 = 100;
@@ -59,6 +61,9 @@ pub const EXIT_UNCONSTRAINED: u32 = 111;
 
 /// Executes `BLAKE3_COMPRESS_INNER`.
 pub const BLAKE3_COMPRESS_INNER: u32 = 112;
+
+/// Executes `BLS12-381_DECOMPRESS`.
+pub const BLS12381_DECOMPRESS: u32 = 113;
 
 /// Writes to a file descriptor. Currently only used for `STDOUT/STDERR`.
 pub const WRITE: u32 = 999;

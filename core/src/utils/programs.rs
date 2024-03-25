@@ -49,6 +49,9 @@ pub mod tests {
     pub const ED_DECOMPRESS_ELF: &[u8] =
         include_bytes!("../../../tests/ed-decompress/elf/riscv32im-succinct-zkvm-elf");
 
+    pub const BLS_DECOMPRESS_ELF: &[u8] =
+        include_bytes!("../../../tests/bls-decompress/elf/riscv32im-succinct-zkvm-elf");
+
     pub const KECCAK_PERMUTE_ELF: &[u8] =
         include_bytes!("../../../tests/keccak-permute/elf/riscv32im-succinct-zkvm-elf");
 

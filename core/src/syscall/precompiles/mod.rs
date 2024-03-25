@@ -4,6 +4,7 @@ pub mod k256;
 pub mod keccak256;
 pub mod sha256;
 pub mod weierstrass;
+pub mod bls12381;
 
 use num::BigUint;
 use serde::{Deserialize, Serialize};

@@ -25,9 +25,13 @@ pub enum FieldOperation {
 #[field_cols_with_limbs]
 pub struct Op<T>(Limbs<T, 32>); // => generates FieldOpCols32
 
+#[field_cols_with_limbs]
+pub struct Op<T>(Limbs<T, 48>); // => generates FieldOpCols48
+
 #[duplicate_item(
     op_type             nb_limbs;
     [ FieldOpCols32 ]   [ 32 ];
+    [ FieldOpCols48 ]   [ 48 ];
 )]
 impl<F: PrimeField32> op_type<F> {
     pub fn populate<P: FieldParameters>(
@@ -128,6 +132,7 @@ impl<F: PrimeField32> op_type<F> {
 #[duplicate_item(
     op_type             nb_limbs;
     [ FieldOpCols32 ]   [32];
+    [ FieldOpCols48 ]   [ 48 ];
 )]
 impl<V: Copy> op_type<V> {
     #[allow(unused_variables)]

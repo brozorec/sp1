@@ -32,6 +32,7 @@ pub(crate) mod riscv_chips {
     pub use crate::syscall::precompiles::sha256::ShaExtendChip;
     pub use crate::syscall::precompiles::weierstrass::WeierstrassAddAssignChip;
     pub use crate::syscall::precompiles::weierstrass::WeierstrassDoubleAssignChip;
+    pub use crate::syscall::precompiles::bls12381::Bls12381DecompressChip;
     pub use crate::utils::ec::edwards::ed25519::Ed25519Parameters;
     pub use crate::utils::ec::edwards::EdwardsCurve;
     pub use crate::utils::ec::weierstrass::secp256k1::Secp256k1Parameters;
@@ -93,6 +94,8 @@ pub enum RiscvAir<F: PrimeField32> {
     KeccakP(KeccakPermuteChip),
     /// A precompile for the Blake3 compression function.
     Blake3Compress(Blake3CompressInnerChip),
+    /// A precompile for decompressing a point on the BLS12-381 curve.
+    Bls12381Decompress(Bls12381DecompressChip),
 }
 
 impl<F: PrimeField32> RiscvAir<F> {
@@ -123,6 +126,8 @@ impl<F: PrimeField32> RiscvAir<F> {
         chips.push(RiscvAir::Ed25519Decompress(ed_decompress));
         let k256_decompress = K256DecompressChip::default();
         chips.push(RiscvAir::K256Decompress(k256_decompress));
+        let bls12381_decompress = Bls12381DecompressChip::default();
+        chips.push(RiscvAir::Bls12381Decompress(bls12381_decompress));
         let weierstrass_add_assign =
             WeierstrassAddAssignChip::<SwCurve<Secp256k1Parameters>>::new();
         chips.push(RiscvAir::Secp256k1Add(weierstrass_add_assign));

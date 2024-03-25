@@ -27,6 +27,7 @@ pub struct Den<T>(Limbs<T, 48>); // => generates FieldDenCols48
 #[duplicate_item(
     den_type            nb_limbs;
     [ FieldDenCols32 ]  [ 32 ];
+    [ FieldDenCols48 ]  [ 48 ];
 )]
 impl<F: PrimeField32> den_type<F> {
     pub fn populate<P: FieldParameters>(
@@ -87,6 +88,7 @@ impl<F: PrimeField32> den_type<F> {
 #[duplicate_item(
     den_type            nb_limbs;
     [ FieldDenCols32 ]  [ 32 ];
+    [ FieldDenCols48 ]  [ 48 ];
 )]
 impl<V: Copy> den_type<V> {
     #[allow(unused_variables)]
@@ -133,12 +135,13 @@ mod tests {
     use p3_air::BaseAir;
     use p3_field::{Field, PrimeField32};
 
-    use super::{FieldDenCols32, Limbs};
+    use super::{FieldDenCols48, Limbs};
 
     use crate::air::MachineAir;
 
     use crate::utils::ec::edwards::ed25519::Ed25519BaseField;
     use crate::utils::ec::field::FieldParameters;
+    use crate::utils::ec::weierstrass::bls12_381::Bls12381BaseField;
     use crate::utils::{uni_stark_prove as prove, uni_stark_verify as verify};
     use crate::utils::{BabyBearPoseidon2, StarkUtils};
     use crate::{air::SP1AirBuilder, runtime::ExecutionRecord};
@@ -153,13 +156,13 @@ mod tests {
     use sp1_derive::AlignedBorrow;
 
     pub const NUM_TEST_COLS: usize = size_of::<TestCols<u8>>();
-    pub const NB_LIMBS: usize = 32;
+    pub const NB_LIMBS: usize = 48;
 
     #[derive(AlignedBorrow, Debug, Clone)]
     pub struct TestCols<T> {
         pub a: Limbs<T, NB_LIMBS>,
         pub b: Limbs<T, NB_LIMBS>,
-        pub a_den_b: FieldDenCols32<T>,
+        pub a_den_b: FieldDenCols48<T>,
     }
 
     struct FieldDenChip<P: FieldParameters> {
@@ -259,7 +262,7 @@ mod tests {
     }
 
     #[test]
-    fn generate_trace() {
+    fn generate_trace_field_den() {
         let shard = ExecutionRecord::default();
         let chip: FieldDenChip<Ed25519BaseField> = FieldDenChip::new(true);
         let trace: RowMajorMatrix<BabyBear> =
@@ -274,7 +277,7 @@ mod tests {
 
         let shard = ExecutionRecord::default();
 
-        let chip: FieldDenChip<Ed25519BaseField> = FieldDenChip::new(true);
+        let chip: FieldDenChip<Bls12381BaseField> = FieldDenChip::new(true);
         let trace: RowMajorMatrix<BabyBear> =
             chip.generate_trace(&shard, &mut ExecutionRecord::default());
         // This it to test that the proof DOESN'T work if messed up.

@@ -3,6 +3,7 @@ use std::rc::Rc;
 
 use crate::runtime::{Register, Runtime};
 use crate::syscall::precompiles::blake3::Blake3CompressInnerChip;
+use crate::syscall::precompiles::bls12381::Bls12381DecompressChip;
 use crate::syscall::precompiles::edwards::EdAddAssignChip;
 use crate::syscall::precompiles::edwards::EdDecompressChip;
 use crate::syscall::precompiles::k256::K256DecompressChip;
@@ -60,6 +61,9 @@ pub enum SyscallCode {
     /// Executes the `BLAKE3_COMPRESS_INNER` precompile.
     BLAKE3_COMPRESS_INNER = 112,
 
+    /// Executes the `BLS12381_DECOMPRESS` precompile.
+    BLS12381_DECOMPRESS = 113,
+
     WRITE = 999,
 }
 
@@ -80,6 +84,7 @@ impl SyscallCode {
             110 => SyscallCode::ENTER_UNCONSTRAINED,
             111 => SyscallCode::EXIT_UNCONSTRAINED,
             112 => SyscallCode::BLAKE3_COMPRESS_INNER,
+            113 => SyscallCode::BLS12381_DECOMPRESS,
             999 => SyscallCode::WRITE,
             _ => panic!("invalid syscall number: {}", value),
         }
@@ -224,6 +229,10 @@ pub fn default_syscall_map() -> HashMap<SyscallCode, Rc<dyn Syscall>> {
     syscall_map.insert(
         SyscallCode::EXIT_UNCONSTRAINED,
         Rc::new(SyscallExitUnconstrained::new()),
+    );
+    syscall_map.insert(
+        SyscallCode::BLS12381_DECOMPRESS,
+        Rc::new(Bls12381DecompressChip::new()),
     );
     syscall_map.insert(SyscallCode::WRITE, Rc::new(SyscallWrite::new()));
 
